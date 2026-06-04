@@ -10,10 +10,12 @@ variables:
 steps:
 - checkout: self
 
-- task: TerraformInstaller@1
+- script: |
+    wget -q https://releases.hashicorp.com/terraform/1.8.5/terraform_1.8.5_linux_amd64.zip
+    unzip terraform_1.8.5_linux_amd64.zip
+    sudo mv terraform /usr/local/bin/
+    terraform version
   displayName: Install Terraform
-  inputs:
-    terraformVersion: '1.8.5'
 
 - task: AzureCLI@2
   displayName: Terraform Init
@@ -21,8 +23,7 @@ steps:
     azureSubscription: $(serviceConnection)
     scriptType: bash
     scriptLocation: inlineScript
-    inlineScript: |
-      terraform init
+    inlineScript: terraform init
 
 - task: AzureCLI@2
   displayName: Terraform Validate
@@ -30,8 +31,7 @@ steps:
     azureSubscription: $(serviceConnection)
     scriptType: bash
     scriptLocation: inlineScript
-    inlineScript: |
-      terraform validate
+    inlineScript: terraform validate
 
 - task: AzureCLI@2
   displayName: Terraform Plan
@@ -39,8 +39,7 @@ steps:
     azureSubscription: $(serviceConnection)
     scriptType: bash
     scriptLocation: inlineScript
-    inlineScript: |
-      terraform plan
+    inlineScript: terraform plan
 
 - task: AzureCLI@2
   displayName: Terraform Apply
@@ -48,5 +47,4 @@ steps:
     azureSubscription: $(serviceConnection)
     scriptType: bash
     scriptLocation: inlineScript
-    inlineScript: |
-      terraform apply -auto-approve
+    inlineScript: terraform apply -auto-approve
