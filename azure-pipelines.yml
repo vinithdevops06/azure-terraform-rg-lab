@@ -1,0 +1,52 @@
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  serviceConnection: 'azure-free-trial-sc'
+
+steps:
+- checkout: self
+
+- task: TerraformInstaller@1
+  displayName: Install Terraform
+  inputs:
+    terraformVersion: '1.8.5'
+
+- task: AzureCLI@2
+  displayName: Terraform Init
+  inputs:
+    azureSubscription: $(serviceConnection)
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+      terraform init
+
+- task: AzureCLI@2
+  displayName: Terraform Validate
+  inputs:
+    azureSubscription: $(serviceConnection)
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+      terraform validate
+
+- task: AzureCLI@2
+  displayName: Terraform Plan
+  inputs:
+    azureSubscription: $(serviceConnection)
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+      terraform plan
+
+- task: AzureCLI@2
+  displayName: Terraform Apply
+  inputs:
+    azureSubscription: $(serviceConnection)
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+      terraform apply -auto-approve
